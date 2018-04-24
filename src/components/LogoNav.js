@@ -9,6 +9,7 @@ import {
   NavLink} from 'reactstrap';
 import campfire from '../assets/campfire.png';
 import '../css/LogoNav.css';
+import Logo from './Logo';
 class LogoNav extends Component {
   constructor(props) {
     super(props);
@@ -27,6 +28,7 @@ class LogoNav extends Component {
       <Navbar className="navbar-dark" light expand="md">
       <NavbarBrand href="/">
       <div className="App-brand">
+        <Logo className="LogoAnimated"/>
         <img src={campfire} width={80} height={80} className="App-campfire" alt="campfire" />
       </div>
       </NavbarBrand>
