@@ -1,5 +1,5 @@
 .App-body > .jumbotron > .jumbotron{
-  background: #fff !important;
+  background: #fff;
 }
 .App-body > .jumbotron > .jumbotron > .btn{
   font-size: 2.5rem;

@@ -40,15 +40,15 @@
 .card-img-top{
   min-height: 32vh;
   flex: 1 !important;
+  overflow: hidden;
   display: flex;
 }
 @media screen and (min-width:768px) {
-  .card-img-top{
-    filter:grayscale(1);
-    transition: filter .3s;
+  .card-img-top img{
+    transition: all .3s;
   }
-  .card:hover .card-img-top{
-    filter:unset;
+  .card:hover .card-img-top img{
+    transform: scale(1.2);
   }
   .card:hover{
     box-shadow: unset!important;

@@ -1,6 +1,10 @@
 *{
   outline: none!important;
 }
+.App-body > .jumbotron > .jumbotron{
+  background: #fff!important;
+  background: radial-gradient(at top center,rgba(255,255,255,0.5),transparent) !important;
+}
 
 .App {
   text-align: center;

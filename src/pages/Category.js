@@ -27,9 +27,9 @@ class Category extends Component {
         <MainPage headtitle={this.props.catname} headbg={this.props.catbg}>
           <Jumbotron className="catintro">
             <h1 className="display-3">
-               Поиск {this.props.catname}
+               {this.props.catname}
             </h1>
-            <p className="lead">Поможет найти Ваш отдых</p>
+            <p className="lead">Поможем найти Ваш отдых</p>
             <hr className="my-2" />
             <p>Воспользуйтесь формой поиска</p>
             <Button color="dark" onClick={this.toggle} style={{ marginBottom: '1rem' }}>Искать

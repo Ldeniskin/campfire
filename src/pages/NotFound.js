@@ -16,9 +16,6 @@ class NotFound extends Component {
           <hr className="my-2" />
           <p>Но не стоит грустить.</p>
           <a href="/" className="lead">
-            <Button color="info" >Назад</Button>
-          </a>
-          <a href="/" className="lead">
             <Button color="danger" >Вернуться на главную</Button>
           </a>
         </Jumbotron>
