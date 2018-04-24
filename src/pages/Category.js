@@ -8,6 +8,7 @@ import kuz from '../assets/cards/kuz.png';
 import geo from '../assets/cards/geo.png';
 import typ from '../assets/cards/type.png';
 import animals from '../assets/cards/animals.jpg';
+import FontAwesome from 'react-fontawesome';
 
 
 class Category extends Component {
@@ -24,14 +25,20 @@ class Category extends Component {
   render() {
     return (
         <MainPage headtitle={this.props.catname} headbg={this.props.catbg}>
-          <Jumbotron>
+          <Jumbotron className="catintro">
             <h1 className="display-3">
-               Эта страница
+               Поиск {this.props.catname}
             </h1>
             <p className="lead">Поможет найти Ваш отдых</p>
             <hr className="my-2" />
             <p>Воспользуйтесь формой поиска</p>
-            <Button color="info" onClick={this.toggle} style={{ marginBottom: '1rem' }}>Искать</Button>
+            <Button color="dark" onClick={this.toggle} style={{ marginBottom: '1rem' }}>Искать
+              {this.state.collapse ? (
+                <FontAwesome name='chevron-up' />
+              ) : (
+                <FontAwesome name='chevron-down' />
+              )}
+            </Button>
           </Jumbotron>
           <Collapse isOpen={this.state.collapse}>
             <Jumbotron className="catsearch">
@@ -51,10 +58,11 @@ class Category extends Component {
         <FormGroup>
         <MultipleSelect/>
         </FormGroup>
-        <Button>Найти</Button>
+        <Button color="danger">Найти</Button>
       </Form>
             </Jumbotron>
           </Collapse>
+          <h1 className="display-3">Найдите вариант для себя:</h1>
           <Jumbotron className="catcards">
         <Card >
            <div className="card-img-top"><img top="top" width="100%" src={geo} alt="Card image cap"/></div>

@@ -13,6 +13,7 @@ import ContactForm from './ContactForm';
 import MainMenu from './MainMenu';
 import cabin from '../assets/cabin.png';
 import andr from '../assets/andr.png';
+import FontAwesome from 'react-fontawesome';
 class FrontPageContent extends Component {
   constructor(props) {
     super(props);
@@ -36,7 +37,13 @@ class FrontPageContent extends Component {
               </FormGroup>
               <div className="searchControlButton">
               <Button color="danger">Искать</Button>
-              <Button color="info" onClick={this.toggle} style={{ marginBottom: '1rem' }}>Больше</Button>
+              <Button color="dark" onClick={this.toggle} style={{ marginBottom: '1rem' }}>
+                {this.state.collapse ? (
+                  <FontAwesome name='chevron-up' />
+                ) : (
+                  <FontAwesome name='chevron-down' />
+                )}
+              </Button>
               </div>
               <Collapse isOpen={this.state.collapse}>
                 <Jumbotron className="catsearch">

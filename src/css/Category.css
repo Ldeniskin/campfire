@@ -1,6 +1,11 @@
 .catsearch.jumbotron{
   background-color: #e9ecef!important;
   margin: 0;
+  box-shadow: inset 0px 7px 5px #888,inset 0px -7px 4px #888;
+  border-radius: 0;
+}
+.catintro{
+  padding-bottom: 0 !important;
 }
 .catcards.jumbotron{
   display: flex;
@@ -19,6 +24,7 @@
 }
 .cardcaption{
   justify-content: center;
+  margin: 1em;
 }
 .card-body{
   padding: 0!important;
@@ -32,6 +38,7 @@
   width: 100%;
 }
 .card-img-top{
+  min-height: 32vh;
   flex: 1 !important;
   display: flex;
 }
