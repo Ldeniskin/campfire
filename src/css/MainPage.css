@@ -1,0 +1,64 @@
+*{
+  outline: none!important;
+}
+
+.App {
+  text-align: center;
+  background: #000;
+}
+.App > div{
+  width: 100%;
+  height: 100%;
+}
+.App-body{
+  background-color: #e4e4e4;
+  padding: 0!important;
+}
+.App-slogan{
+  z-index: 1;
+}
+.App-slogan h1{
+  font-size: 4.5rem;
+  font-weight: bold;
+}
+.App-slogan h3{
+  font-size: 1.5rem;
+}
+
+
+.App-body > .jumbotron{
+  width: calc(100% - 3rem);
+  position: absolute;
+  border-radius: 10px;
+  top:75%;
+  left:0;
+  margin: 0 1.5em;
+  padding: 0!important;
+  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+}
+.jumbotron{
+  background-color: transparent!important;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+@media screen and (max-width:1060px){
+  .App-body > .jumbotron{
+    position: relative;
+    width: 100%;
+    margin: 0!important;
+    box-shadow: unset;
+  }
+  .jumbotron {
+    background: #fff !important;
+  }
+}
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

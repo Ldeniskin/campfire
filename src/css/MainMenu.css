@@ -1,0 +1,66 @@
+.App-body .nav-link h1{
+  display: none;
+}
+.App-body .navbar-nav{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  width: 100%;
+}
+@media screen and (max-width:1060px){
+  .App-body .navbar{
+    background: rgba(51,51,51,0.5);
+  }
+  .App-body .navbar button{
+    width: 100%;
+  }
+}
+@media screen and (max-width:768px){
+  .App-body .nav-link{
+    display: flex;
+  }
+  .App-body .nav-link h1{
+    display: block;
+    flex:6;
+  }
+  .App-body .nav-link img{
+    flex:1;
+  }
+}
+@media screen and (max-width:1121px){
+  .App-body .navbar-dark.navbar.navbar-expand-md.navbar-light {
+    background: #000;
+  }
+}
+  @media screen and (min-width:768px) {
+    .nav-item{
+      z-index: 1!important;
+      position: relative;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      transition: all .8s;
+    }
+    .nav-item:hover{
+      border: 1px solid white;
+
+    }
+    .nav-item:before{
+      border-radius: 10px;
+      z-index: -1!important;
+      position: absolute;
+      content: "";
+      z-index: 0;
+      top:50%;
+      left: 50%;
+      width: 0%;
+      height: 0;
+      transition: all .5s;
+      background: rgba(255,255,255,0.2);
+    }
+    .nav-item:hover:before{
+      height: 100%;
+      width: 100%;
+      left: 0;
+      top:0;
+    }
+  }

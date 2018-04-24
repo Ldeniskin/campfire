@@ -1,0 +1,16 @@
+.App-footer{
+  background: #323437;
+  padding: 2rem 35%;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  justify-content: space-around;
+}
+@media screen and (min-width:1060px){
+  .App-ok, .App-vk, .App-fb{
+    transition: transform .3s;
+  }
+  .App-ok:hover, .App-vk:hover, .App-fb:hover{
+    transform:scale(1.15);
+  }
+}
