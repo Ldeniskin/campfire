@@ -1,171 +1,125 @@
-/* eslint react/no-multi-comp:0, no-console:0 */
-
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Picker from 'rc-calendar/lib/Picker';
-import RangeCalendar from 'rc-calendar/lib/RangeCalendar';
-import zhCN from 'rc-calendar/lib/locale/zh_CN';
-import enUS from 'rc-calendar/lib/locale/en_US';
-import TimePickerPanel from 'rc-time-picker/lib/Panel';
-import 'rc-calendar/assets/index.css';
-import 'rc-time-picker/assets/index.css';
-
 import moment from 'moment';
-import 'moment/locale/zh-cn';
-import 'moment/locale/en-gb';
+import Helmet from 'react-helmet';
+import 'moment/locale/ru';
+import MomentLocaleUtils from 'react-day-picker/moment'
+import DayPickerInput from 'react-day-picker/DayPickerInput';
+import 'react-day-picker/lib/style.css';
 
-const cn = window.location.search.indexOf('cn') !== -1;
+import { formatDate, parseDate } from 'react-day-picker/moment';
 
-if (cn) {
-  moment.locale('zh-cn');
-} else {
-  moment.locale('en-gb');
-}
-
-const now = moment();
-if (cn) {
-  now.utcOffset(8);
-} else {
-  now.utcOffset(0);
-}
-
-const defaultCalendarValue = now.clone();
-defaultCalendarValue.add(-1, 'month');
-
-const timePickerElement = (
-  <TimePickerPanel
-    defaultValue={[moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}
-  />
-);
-
-function newArray(start, end) {
-  const result = [];
-  for (let i = start; i < end; i++) {
-    result.push(i);
-  }
-  return result;
-}
-
-function disabledDate(current) {
-  const date = moment();
-  date.hour(0);
-  date.minute(0);
-  date.second(0);
-  return current.isBefore(date);  // can not select days before today
-}
-
-function disabledTime(time, type) {
-  console.log('disabledTime', time, type);
-  if (type === 'start') {
-    return {
-      disabledHours() {
-        const hours = newArray(0, 60);
-        hours.splice(20, 4);
-        return hours;
-      },
-      disabledMinutes(h) {
-        if (h === 20) {
-          return newArray(0, 31);
-        } else if (h === 23) {
-          return newArray(30, 60);
-        }
-        return [];
-      },
-      disabledSeconds() {
-        return [55, 56];
-      },
+export default class Example extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleFromChange = this.handleFromChange.bind(this);
+    this.handleToChange = this.handleToChange.bind(this);
+    this.state = {
+      from: undefined,
+      to: undefined,
     };
   }
-  return {
-    disabledHours() {
-      const hours = newArray(0, 60);
-      hours.splice(2, 6);
-      return hours;
-    },
-    disabledMinutes(h) {
-      if (h === 20) {
-        return newArray(0, 31);
-      } else if (h === 23) {
-        return newArray(30, 60);
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
+  focusTo() {
+    // Focus to `to` field. A timeout is required here because the overlays
+    // already set timeouts to work well with input fields
+    this.timeout = setTimeout(() => this.to.getInput().focus(), 0);
+  }
+  showFromMonth() {
+    const { from, to } = this.state;
+    if (!from) {
+      return;
+    }
+    if (moment(to).diff(moment(from), 'months') < 2) {
+      this.to.getDayPicker().showMonth(from);
+    }
+  }
+  handleFromChange(from) {
+    // Change the from date and focus the "to" input field
+    this.setState({ from }, () => {
+      if (!this.state.to) {
+        this.focusTo();
       }
-      return [];
-    },
-    disabledSeconds() {
-      return [55, 56];
-    },
-  };
-}
-
-const formatStr = 'YYYY-MM-DD HH:mm:ss';
-function format(v) {
-  return v ? v.format(formatStr) : '';
-}
-
-function isValidRange(v) {
-  return v && v[0] && v[1];
-}
-
-function onStandaloneChange(value) {
-  console.log('onChange');
-  console.log(value[0] && format(value[0]), value[1] && format(value[1]));
-}
-
-function onStandaloneSelect(value) {
-  console.log('onSelect');
-  console.log(format(value[0]), format(value[1]));
-}
-
-class Demo extends React.Component {
-  state = {
-    value: [],
-    hoverValue: [],
+    });
   }
-
-  onChange = (value) => {
-    console.log('onChange', value);
-    this.setState({ value });
+  handleToChange(to) {
+    this.setState({ to }, this.showFromMonth);
   }
-
-  onHoverChange = (hoverValue) => {
-    this.setState({ hoverValue });
-  }
-
   render() {
-    const state = this.state;
-    const calendar = (
-      <RangeCalendar
-        hoverValue={state.hoverValue}
-        onHoverChange={this.onHoverChange}
-        showWeekNumber={false}
-        dateInputPlaceholder={['start', 'end']}
-        defaultValue={[now, now.clone().add(1, 'months')]}
-        locale={cn ? zhCN : enUS}
-        disabledTime={disabledTime}
-        timePicker={timePickerElement}
-      />
-    );
+    const { from, to } = this.state;
+    const modifiers = { start: from, end: to };
     return (
-      <Picker
-        value={state.value}
-        onChange={this.onChange}
-        animation="slide-up"
-        calendar={calendar}
-      >
-        {
-          ({ value }) => {
-            return (<span>
-                <input
-                  placeholder="please select"
-                  style={{ width: 350 }}
-                  disabled={state.disabled}
-                  readOnly
-                  className="ant-calendar-picker-input ant-input"
-                  value={isValidRange(value) && `${format(value[0])} - ${format(value[1])}` || ''}
-                />
-                </span>);
-          }
-        }
-      </Picker>);
+      <div className="InputFromTo">
+        <DayPickerInput
+          value={from}
+          placeholder="C"
+          format="LL"
+          locale="ru"
+          localeUtils={MomentLocaleUtils}
+          formatDate={formatDate}
+          parseDate={parseDate}
+          dayPickerProps={{
+            selectedDays: [from, { from, to }],
+            disabledDays: { after: to },
+            toMonth: to,
+            modifiers,
+            localeUtils:MomentLocaleUtils,
+            locale:'ru',
+            numberOfMonths: 2,
+          }}
+          onDayChange={this.handleFromChange}
+        />{' '}
+        —{' '}
+        <span className="InputFromTo-to">
+          <DayPickerInput
+            ref={el => (this.to = el)}
+            value={to}
+            placeholder="По"
+            format="LL"
+            locale="ru"
+            localeUtils={MomentLocaleUtils}
+            formatDate={formatDate}
+            parseDate={parseDate}
+            dayPickerProps={{
+              selectedDays: [from, { from, to }],
+              disabledDays: { before: from },
+              modifiers,
+              localeUtils:MomentLocaleUtils,
+              locale:'ru',
+              month: from,
+              fromMonth: from,
+              numberOfMonths: 2,
+            }}
+            onDayChange={this.handleToChange}
+          />
+        </span>
+        <Helmet>
+          <style>{`
+  .InputFromTo .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
+    background-color: #f0f8ff !important;
+    color: #4a90e2;
+  }
+  .InputFromTo .DayPicker-Day {
+    border-radius: 0 !important;
+  }
+  .InputFromTo .DayPicker-Day--start {
+    border-top-left-radius: 50% !important;
+    border-bottom-left-radius: 50% !important;
+  }
+  .InputFromTo .DayPicker-Day--end {
+    border-top-right-radius: 50% !important;
+    border-bottom-right-radius: 50% !important;
+  }
+  .InputFromTo .DayPickerInput-Overlay {
+    width: 550px;
+  }
+  .InputFromTo-to .DayPickerInput-Overlay {
+    margin-left: -198px;
+  }
+`}</style>
+        </Helmet>
+      </div>
+    );
   }
 }
-export default Demo;
