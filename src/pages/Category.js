@@ -11,6 +11,7 @@ import animals from '../assets/cards/animals.jpg';
 import FontAwesome from 'react-fontawesome';
 
 
+
 class Category extends Component {
   constructor(props) {
     super(props);
@@ -57,7 +58,7 @@ class Category extends Component {
         </FormGroup>
         <FormGroup>
         <MultipleSelect/>
-        </FormGroup>
+      </FormGroup>
         <Button color="danger">Найти</Button>
       </Form>
             </Jumbotron>
@@ -103,7 +104,7 @@ class Category extends Component {
             </div>
             <Button color="danger">Посмотреть</Button>
           </CardBody>
-          </Card>
+        </Card>
           </Jumbotron>
         </MainPage>
     );

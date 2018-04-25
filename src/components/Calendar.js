@@ -1,194 +1,217 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Picker from 'rc-calendar/lib/Picker';
-import RangeCalendar from 'rc-calendar/lib/RangeCalendar';
-import zhCN from 'rc-calendar/lib/locale/zh_CN';
-import enUS from 'rc-calendar/lib/locale/en_US';
-import TimePickerPanel from 'rc-time-picker/lib/Panel';
-import 'rc-calendar/assets/index.css';
-import 'rc-time-picker/assets/index.css';
-
-import moment from 'moment';
-import 'moment/locale/zh-cn';
-import 'moment/locale/en-gb';
-
-const cn = location.search.indexOf('cn') !== -1;
-
-if (cn) {
-  moment.locale('zh-cn');
-} else {
-  moment.locale('en-gb');
-}
-
-const now = moment();
-if (cn) {
-  now.utcOffset(8);
-} else {
-  now.utcOffset(0);
-}
-
-const defaultCalendarValue = now.clone();
-defaultCalendarValue.add(-1, 'month');
-
-const timePickerElement = (
-  <TimePickerPanel
-    defaultValue={[moment('00:00:00', 'HH:mm:ss'), moment('23:59:59', 'HH:mm:ss')]}
-  />
-);
-
-function newArray(start, end) {
-  const result = [];
-  for (let i = start; i < end; i++) {
-    result.push(i);
-  }
-  return result;
-}
-
-function disabledDate(current) {
-  const date = moment();
-  date.hour(0);
-  date.minute(0);
-  date.second(0);
-  return current.isBefore(date);  // can not select days before today
-}
-
-function disabledTime(time, type) {
-  console.log('disabledTime', time, type);
-  if (type === 'start') {
-    return {
-      disabledHours() {
-        const hours = newArray(0, 60);
-        hours.splice(20, 4);
-        return hours;
-      },
-      disabledMinutes(h) {
-        if (h === 20) {
-          return newArray(0, 31);
-        } else if (h === 23) {
-          return newArray(30, 60);
+/*Selector Range*/
+class Range extends React.Component {
+    constructor(props) {
+        super(props);
+        this.monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+        this.daysNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    }
+    dateInfo(date){
+        let dateRow;
+        let rangeMonthText = 'Choose a date';
+        if(date){
+            dateRow = <td rowSpan="2"><span className="calendar__range-date">{date.getDate()}</span></td>;
+            rangeMonthText = this.monthNames[date.getMonth()]+' '+ date.getFullYear();
         }
-        return [];
-      },
-      disabledSeconds() {
-        return [55, 56];
-      },
-    };
-  }
-  return {
-    disabledHours() {
-      const hours = newArray(0, 60);
-      hours.splice(2, 6);
-      return hours;
-    },
-    disabledMinutes(h) {
-      if (h === 20) {
-        return newArray(0, 31);
-      } else if (h === 23) {
-        return newArray(30, 60);
-      }
-      return [];
-    },
-    disabledSeconds() {
-      return [55, 56];
-    },
-  };
+        return (<tr>
+            {dateRow}
+            <td>
+                <span className="calendar__range-month">
+                    {rangeMonthText}
+                </span>
+            </td>
+        </tr>);
+    }
+    dumbDate(date, title){
+       let day = (date)?(<tr>
+               <td>
+                   <span className="calendar__range-day">{this.daysNames[date.getDay()]}</span>
+               </td>
+           </tr>)
+           :null;
+       return (<div className="calendar__from-date">
+            <table>
+                <tbody>
+                    <tr>
+                        <td colSpan="2"><span className="calendar__range-h">{title}</span></td>
+                    </tr>
+                    {this.dateInfo(date)}
+                    {day}
+                </tbody>
+            </table>
+        </div>)
+    }
+    render() {
+        let {dateFrom, dateTo} = this.props;
+        dateTo = dateTo ? new Date(dateTo) : dateTo;
+        dateFrom = dateFrom ? new Date(dateFrom) : dateFrom;
+        return (<div className="calendar__range">
+            {this.dumbDate(dateFrom,'check-in')}
+            <div className="calendar__image-arrow">
+                <span>&#8594;</span>
+            </div>
+            {this.dumbDate(dateTo,'check-out')}
+        </div>)
+    }
+}
+/*Header Table*/
+class Header extends React.Component {
+    constructor(props) {
+        super(props);
+        this.monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+        this.dayNames = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
+    }
+    shouldComponentUpdate(nextProps){
+        return nextProps.date != this.props.date;
+    }
+    render() {
+        let date  = new Date(this.props.date);
+        return (<div className="calendar__header">
+            <div className="calendar__month-chooser">
+                <span className="calendar__prev-month" onClick={this.props.prevMonth}>❮</span>
+                <span>{this.monthNames[date.getMonth()]}</span>
+                <span className="calendar__next-month" onClick={this.props.nextMonth}>❯</span>
+            </div>
+            <table className="calendar__days-names" cellSpacing="0">
+                <tbody>
+                    <tr>
+                        {this.dayNames.map((i, key)=> <td className="calendar__day-name" key={key}>{i}</td>)}
+                    </tr>
+                </tbody>
+            </table>
+        </div>)
+    }
 }
 
-const formatStr = 'YYYY-MM-DD HH:mm:ss';
-function format(v) {
-  return v ? v.format(formatStr) : '';
-}
-
-function isValidRange(v) {
-  return v && v[0] && v[1];
-}
-
-function onStandaloneChange(value) {
-  console.log('onChange');
-  console.log(value[0] && format(value[0]), value[1] && format(value[1]));
-}
-
-function onStandaloneSelect(value) {
-  console.log('onSelect');
-  console.log(format(value[0]), format(value[1]));
-}
-
-class Demo extends React.Component {
-  state = {
-    value: [],
-    hoverValue: [],
-  }
-
-  onChange = (value) => {
-    console.log('onChange', value);
-    this.setState({ value });
-  }
-
-  onHoverChange = (hoverValue) => {
-    this.setState({ hoverValue });
-  }
-
-  render() {
-    const state = this.state;
-    const calendar = (
-      <RangeCalendar
-        hoverValue={state.hoverValue}
-        onHoverChange={this.onHoverChange}
-        showWeekNumber={false}
-        dateInputPlaceholder={['start', 'end']}
-        defaultValue={[now, now.clone().add(1, 'months')]}
-        locale={cn ? zhCN : enUS}
-        disabledTime={disabledTime}
-        timePicker={timePickerElement}
-      />
-    );
-    return (
-      <Picker
-        value={state.value}
-        onChange={this.onChange}
-        animation="slide-up"
-        calendar={calendar}
-      >
-        {
-          ({ value }) => {
-            return (<span>
-                <input
-                  placeholder="please select"
-                  style={{ width: 350 }}
-                  disabled={state.disabled}
-                  readOnly
-                  className="ant-calendar-picker-input ant-input"
-                  value={isValidRange(value) && `${format(value[0])} - ${format(value[1])}` || ''}
-                />
-                </span>);
-          }
+/*Calendar Table*/
+class Calendar extends React.Component{
+    constructor(props){
+        super(props);
+        this.selectionEnaled = false;
+        this.animationDirection = "forward";
+        this.shortMonthNames = ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sept','Oct','Nov','Dec']
+        this.currentDate = new Date();
+    }
+    handleClick(index){
+        let {setRange, indexStart, indexEnd} = this.props;
+        if(this.selectionEnabled ){
+            if((index == indexStart)){
+                this.selectionEnabled = false;
+                setRange();
+            }else{
+                this.selectionEnabled = false;
+                setRange(this.props.indexStart, index);
+            }
+        }else{
+            if(index == indexEnd){
+                this.selectionEnabled = true;
+            }else{
+                this.selectionEnabled = true;
+                setRange(index);
+            }
         }
-      </Picker>);
-  }
+    }
+    mouseOver(index){
+        if(this.selectionEnabled){
+            this.props.setRange(this.props.indexStart, index);
+        }
+    }
+    componentWillUpdate(nextProps){
+        if(nextProps.date != this.props.date){
+            this.animationDirection = (nextProps.date - this.props.date > 0) ? "forward" : "backward"
+        }
+    }
+    componentDidUpdate(prevProps){
+        if(prevProps.date != this.props.date){
+            this.refs.calendar.classList.add(`animate--${this.animationDirection}`);
+        }
+    }
+    getDay(date, key, month){
+        let time = date.getTime();
+        let currentDate = this.currentDate;
+        let {indexEnd, indexStart} = this.props;
+        let dayClass = (time > indexStart && time < indexEnd) ? 'selected' : '';
+        dayClass += ( date < currentDate.setHours(0)) ?' out--range':'';
+        dayClass += (time == indexStart && indexEnd > indexStart) ? ' sel--start' : '';
+        dayClass += (time == indexEnd && time > indexStart) ? ' sel--end' : '';
+        dayClass += (date.getMonth() == month)?' calendar__day':' calendar__day dis';
+        return(<td className={dayClass}
+                   onClick={this.handleClick.bind(this, time)}
+                   onMouseOver={this.mouseOver.bind(this,time)}
+                   key={key}>
+                       <div className="calendar__inner-day">
+                           {date.getDate()}
+                       </div>
+              </td>)
+    }
+    render(){
+        let date  = new Date(this.props.date);
+        let month = date.getMonth();
+        date.setDate(1);
+        if(this.animationDirection == "forward"){
+            date.setMonth(date.getMonth() - 1);
+        }
+        let firstDay = date.getDay();
+        if(firstDay !== 1){
+            (firstDay == 0)?
+                date.setDate(date.getDate() - 6)
+                :date.setDate(date.getDate() - (firstDay - 1));
+        }
+        date.setDate(date.getDate() - 1);
+        return(<div className="calendar__wrap">
+            <table className="calendar__table" ref="calendar" key={this.props.date} cellSpacing="0">
+                <tbody>
+                {Array(12).fill(0).map((i, key)=> {
+                    return <tr key={key}>
+                        {Array(7).fill(0).map((_i, _key)=> {
+                            date.setDate(date.getDate() + 1);
+                            return this.getDay(date, _key, month);
+                        })}
+                    </tr>
+                })}
+                </tbody>
+            </table>
+        </div>)
+    }
 }
 
-ReactDOM.render(
-  <div>
-    <h2>calendar</h2>
-    <div style={{ margin: 10 }}>
-      <RangeCalendar
-        showToday={false}
-        showWeekNumber
-        dateInputPlaceholder={['start', 'end']}
-        locale={cn ? zhCN : enUS}
-        showOk={false}
-        showClear
-        format={formatStr}
-        onChange={onStandaloneChange}
-        onSelect={onStandaloneSelect}
-        disabledDate={disabledDate}
-        timePicker={timePickerElement}
-        disabledTime={disabledTime}
-      />
-    </div>
-    <br />
 
-    <div style={{ margin: 20 }}>
-      <Demo />
-    </div>
-  </div>, document.getElementById('__react-content'));
+/*Smart Component*/
+class Calendar extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            date:Date.now(),
+            selectionStart: 0,
+            selectionEnd: 0
+        }
+    }
+    prevMonth(){
+        let date = new Date(this.state.date);
+        date.setMonth(date.getMonth() - 1);
+        this.setState({date:date.getTime()});
+    }
+    nextMonth(){
+        let date = new Date(this.state.date);
+        date.setMonth(date.getMonth() + 1);
+        this.setState({date:date.getTime()});
+    }
+    setRange(selectionStart = 0, selectionEnd = 0){
+        this.setState({selectionStart, selectionEnd});
+    }
+    render(){
+       let {date, selectionStart, selectionEnd} = this.state;
+       return (<div className="Calendar">
+           <Range dateFrom={selectionStart} dateTo={selectionEnd}/>
+           <Header date={date} prevMonth={::this.prevMonth} nextMonth={::this.nextMonth}/>
+           <Calendar date={date}
+                     indexStart = {selectionStart}
+                     indexEnd = {selectionEnd}
+                     setRange = {::this.setRange}
+                     />
+       </div>)
+    }
+}
+
+ReactDOM.render(<Calendar />, document.querySelector('#Calendar'));
