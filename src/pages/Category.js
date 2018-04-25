@@ -9,7 +9,7 @@ import geo from '../assets/cards/geo.png';
 import typ from '../assets/cards/type.png';
 import animals from '../assets/cards/animals.jpg';
 import FontAwesome from 'react-fontawesome';
-
+import Calendar from '../components/Calendar';
 
 
 class Category extends Component {
@@ -57,7 +57,7 @@ class Category extends Component {
         <MultipleSelect/>
         </FormGroup>
         <FormGroup>
-        <MultipleSelect/>
+          <Calendar/>
       </FormGroup>
         <Button color="danger">Найти</Button>
       </Form>
